@@ -17,12 +17,14 @@ $masa = date('d-m-Y h:i A'); // Rekod masa undi (Format 12-Jam)
 // 1. Ini teks yang akan dibaca kalau panel scan guna phone
 $data_qr = "BUKTI UNDIAN SAH\nNama: $nama\nEmail: $email\nMasa: $masa\nSistem: Uni-Vote KKTML";
 
-// 2. Buat nama fail gambar resit yang unik untuk setiap student
-$nama_fail_qr = "qr_" . $_SESSION['user_id'] . ".png";
-$laluan_gambar = "qrcodes/" . $nama_fail_qr;
+// 2. Arahkan sistem jana gambar QR secara langsung guna Output Buffering
+ob_start();
+QRcode::png($data_qr, null, QR_ECLEVEL_L, 5, 2); // Simpan terus tanpa fail
+$imageString = base64_encode(ob_get_contents());
+ob_end_clean();
 
-// 3. Arahkan sistem jana gambar QR dan simpan dalam folder 'qrcodes'
-QRcode::png($data_qr, $laluan_gambar, QR_ECLEVEL_L, 5, 2);
+// 3. Formatkan gambar tersebut supaya boleh dipaparkan guna HTML
+$laluan_gambar = 'data:image/png;base64,' . $imageString;
 ?>
 
 <!DOCTYPE html>
