@@ -1,7 +1,6 @@
 <?php
 session_start();
 include 'db.php';
-include 'phpqrcode/qrlib.php'; 
 
 // Kalau belum login, tendang balik ke muka depan
 if (!isset($_SESSION['user_id'])) {
@@ -17,14 +16,9 @@ $masa = date('d-m-Y h:i A'); // Rekod masa undi (Format 12-Jam)
 // 1. Ini teks yang akan dibaca kalau panel scan guna phone
 $data_qr = "BUKTI UNDIAN SAH\nNama: $nama\nEmail: $email\nMasa: $masa\nSistem: Uni-Vote KKTML";
 
-// 2. Arahkan sistem jana gambar QR secara langsung guna Output Buffering
-ob_start();
-QRcode::png($data_qr, null, QR_ECLEVEL_L, 5, 2); // Simpan terus tanpa fail
-$imageString = base64_encode(ob_get_contents());
-ob_end_clean();
-
-// 3. Formatkan gambar tersebut supaya boleh dipaparkan guna HTML
-$laluan_gambar = 'data:image/png;base64,' . $imageString;
+// 2. Guna API Luar yang stabil (Jaminan 100% keluar gambar)
+$data_qr_encoded = urlencode($data_qr);
+$laluan_gambar = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . $data_qr_encoded;
 ?>
 
 <!DOCTYPE html>
