@@ -12,6 +12,10 @@ if (isset($_POST['login'])) {
         // 2. Check user dalam database
         $query = mysqli_query($conn, "SELECT * FROM users WHERE email='$email' AND password='$password'");
         
+        if (!$query) {
+            die("Ralat MySQL: " . mysqli_error($conn) . "<br>Sila tangkap gambar ini dan tunjukkan kepada saya.");
+        }
+        
         if (mysqli_num_rows($query) > 0) {
             $data = mysqli_fetch_assoc($query);
             
